@@ -1,44 +1,47 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
-import { Spinner, Stack } from 'react-bootstrap';
-import CModal from '../components/CModal';
+import { Form, Spinner, Stack } from 'react-bootstrap';
 import GroupForm from '../components/groups/GroupForm';
 import GroupsList from '../components/groups/GroupsList';
-import MusiciansList from '../components/musicians/MusiciansList';
 
 export default function Groups() {
 
     const [loading, setLoading] = useState(false);
-    const [modalShow, setModalShow] = useState(false);
-    const [groups, setGroups] = useState([]);
-    const [group, setGroup] = useState({});
+    const [musicians, setMusicians] = useState();
+    const [groups, setGroups] = useState();
 
     let fetchGroups = function () {
         setLoading(true);
-        axios({
-            "method": 'get',
-            "url": 'http://localhost:5000/api/getGroups.php'
-        }).then((res) => {
+        axios.get(
+            "http://localhost:5000/api/groups.php",
+            { "params": { "action": "get" } }
+        ).then(res => {
             setGroups(res.data);
             setLoading(false);
-        }).catch(() => {
+        }).catch(e => {
             setLoading(false);
-        })
+        });
     }
 
-    let handleClick = function (g) {
-        setGroup(g);
-        setModalShow(true);
+    let fetchMusicians = function () {
+        setLoading(true);
+        axios.get('http://localhost:5000/api/musicians.php',
+            { "params": { "action": "get" } }
+        ).then((res) => {
+            setMusicians(res.data);
+        }).catch(e => {
+        })
     }
 
     useEffect(() => {
         fetchGroups();
+        fetchMusicians();
     }, [])
 
 
     return (
         <div>
-            <GroupForm className="mb-5" updateList={(g) => { setGroups(g) }} />
+            <GroupForm className="mb-5" musicians={musicians} updateList={(g) => { setGroups(g) }} />
             {
                 loading
                     ? <div className="vertical-center">
@@ -50,34 +53,12 @@ export default function Groups() {
                         </div>
                         : groups.length !== 0
                             ? <>
-                                <GroupsList groups={groups} onItemClick={(m) => { handleClick(m) }} />
+                                <GroupsList groups={groups} updateList={(g) => { setGroups(g) }} />
                             </>
                             :
                             <div className="vertical-center">
                                 <p className="text-center">Aucun groupe repertorie</p>
                             </div>
-            }
-            {
-                group !== undefined
-                    ? <CModal show={modalShow}
-                        onHide={() => setModalShow(false)}
-                        title={
-                            <>
-                                <p>{group.name}</p>
-                                <p>{group.description}</p>
-                            </>
-                        }
-                        body={
-                            <>
-                                <Stack direction="vertical">
-                                    <img className="img-fluid text-center" src={group.img} alt={group.name} />
-                                    <h2 className="text-center mt-4 mb-4">Musiciens du groupe</h2>
-                                    <MusiciansList musicians={group.musicians} />
-                                </Stack>
-
-                            </>
-                        } />
-                    : ''
             }
         </div>
     )

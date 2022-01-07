@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
 
-export default function CModal(props) {
+export default function ImageModal(props) {
     return (
         <Modal
             {...props}

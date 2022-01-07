@@ -77,10 +77,41 @@ body {
   font-size: 1.2em;
 }
 
-.card-item-name, .card-item-spe {
+.card-item-desc {
+  padding-bottom: 20px;
+  font-size: 0.8em;
+  width: 75%;
+  max-lines: 2;
+}
+
+.card-item-name, .card-item-spe, .card-item-desc {
   margin: 0;
   padding-left: 20px;
   padding-right: 20px;
+}
+
+.action-icons {
+  position: absolute;
+  bottom: 20px;
+  left: 73%;
+  color : white
+}
+
+.trash-icon:hover,
+.edit-icon:hover {
+  animation: action-animation 1s ease 0s 1 normal forwards;
+  -webkit-animation: action-animation 1s ease 0s 1 normal forwards;
+}
+
+@keyframes action-animation {
+  0% {
+    transform: scale(1);
+
+  }
+  
+  100% {
+    transform: scale(1.20);
+  }
 }
 
 @keyframes card-animation {
