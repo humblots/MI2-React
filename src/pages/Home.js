@@ -2,6 +2,7 @@ import React from 'react'
 import { Row, Col } from 'react-bootstrap'
 
 export default function Home() {
+
     return (
         <Row className="vertical-center">
             <Col sm={12} md={8}>

@@ -17,3 +17,14 @@ Une fois l'installation des librairies effectuer, lancez les deux commandes suiv
 
 - `php -S localhost:5000` 
 
+## Choses à savoir
+
+Les différent logins pour utiliser le site sont:
+
+- admin:admin (vue administrateur)
+- user:user (vue classique mais connecté)
+
+Les réponses des requeêtes peuvent prendre un certain temps à arriver, la mise à jour n'est pas instantanée.
+
+
+La suppression d'un musicien à son groupe est fonctionnelle, mais pour des raisons qui m'échappent, la liste des musiciens du groupe est réellement mise à jour uniquement après un rafraîchissement de la page des groupes.

@@ -1,44 +1,52 @@
-import React, { useState, useEffect } from 'react'
-import { Spinner } from 'react-bootstrap'
+import React, {useEffect, useState} from 'react'
+import {Spinner} from 'react-bootstrap'
 import axios from 'axios';
 
-// components import
 import MusicianForm from '../components/musicians/MusicianForm';
 import MusiciansList from '../components/musicians/MusiciansList';
 
-export default function Musicians() {
+export default function Musicians(props) {
 
-    // states used to rerender the view 
-    const [musicians, setMusicians] = useState();
+    const [musicians, setMusicians] = useState([]);
     const [loading, setLoading] = useState(false)
 
-    /**
-     * fetch the musicians list from the php server
-     */
+    // Lance le loading et récupère les musiciens puis met à jour la vue;
     let fetchMusicians = function () {
         setLoading(true);
         axios.get('http://localhost:5000/api/musicians.php',
-            { "params": { "action": "get" } }
+            {"params": {"action": "get"}}
         ).then((res) => {
-            setMusicians(res.data);
+            handleMusiciansUpdate(res.data)
             setLoading(false);
         }).catch(e => {
+            setMusicians(undefined);
             setLoading(false);
         })
     }
 
-    // fetchMusicians on page first load
+    // Fonction lancée par le formulaire lors d'un ajout / modification
+    let handleMusiciansUpdate = function (m) {
+        setMusicians(m.sort(function (a, b) {
+            return a.name.toLowerCase() > b.name.toLowerCase();
+        }));
+    }
+
+    // Lance la récupération des données de musiciens lors du premier chargement de la page
     useEffect(() => {
         fetchMusicians();
     }, [])
 
     return (
         <div>
-            <MusicianForm className="mb-5" updateList={(m) => { setMusicians(m) }} />
+            {
+                props.user === "admin"
+                    ? <MusicianForm className="mb-5" updateList={handleMusiciansUpdate}/>
+                    : ""
+            }
             {
                 loading
                     ? <div className="vertical-center">
-                        <Spinner className="loading" animation="grow" />
+                        <Spinner className="loading" animation="grow"/>
                     </div>
                     : musicians === undefined
                         ? <div className="vertical-center">
@@ -46,9 +54,9 @@ export default function Musicians() {
                         </div>
                         : musicians.length !== 0
                             ? <MusiciansList
+                                user={props.user}
                                 musicians={musicians}
-                                context={"musicians"}
-                                updateList={(m) => { setMusicians(m) }}
+                                updateList={handleMusiciansUpdate}
                             />
                             : <div className="vertical-center">
                                 <p className="text-center">Aucun musicien repertorie</p>
